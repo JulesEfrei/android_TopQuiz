@@ -31,5 +31,23 @@
         android:layout_height="wrap_content"
         android:text="Jouer" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Meilleur score:" />
+
+    <TextView
+        android:id="@+id/bestName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nom" />
+
+    <TextView
+        android:id="@+id/bestScore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Score : " />
+
 
 </LinearLayout>
