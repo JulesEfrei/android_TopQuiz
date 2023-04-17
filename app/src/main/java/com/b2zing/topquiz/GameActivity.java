@@ -6,7 +6,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     //Instanciate remain questions counter
     private int mRemainingQuestionCount;
     private int mScore;
+    private boolean mEnableTouchEvent = true;
 
     //Intanciate the layout elements
     private TextView mTextViewQuestion;
@@ -145,6 +149,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return new QuestionBank(Arrays.asList(question1, question2, question3, question4, question5));
     }
 
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return mEnableTouchEvent && super.dispatchTouchEvent(ev);
+    }
+
     @Override
     public void onClick(View view) {
         int index;
@@ -174,16 +182,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
         }
 
-        mRemainingQuestionCount--;
+        mEnableTouchEvent = false;
 
-        if (mRemainingQuestionCount > 0) {
-            Question mCurrentQuestion = mQuestionBank.getNextQuestion();
-            displayQuestion(mCurrentQuestion);
-        } else {
-            // No questions left, end the game
-            Log.v("msg", "End of the game " + this.mScore);
-            this.endGame();
-        }
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mEnableTouchEvent = true;
+
+                mRemainingQuestionCount--;
+
+                if (mRemainingQuestionCount > 0) {
+                    Question mCurrentQuestion = mQuestionBank.getNextQuestion();
+                    displayQuestion(mCurrentQuestion);
+                } else {
+                    // No questions left, end the game
+                    Log.e("msg", "End of the game " + mScore);
+                    endGame();
+                }
+
+            }
+        }, 2_000);
 
     }
 }
