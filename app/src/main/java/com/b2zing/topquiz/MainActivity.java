@@ -1,8 +1,13 @@
 package com.b2zing.topquiz;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +21,8 @@ import com.b2zing.topquiz.model.QuestionBank;
 import com.b2zing.topquiz.model.User;
 
 public class MainActivity extends AppCompatActivity {
+
+    private int REQUEST_CODE_GAME_ACTIVITY = 10;
 
     //Instanciate all the element of the layout
     private TextView mWelcomeText;
@@ -65,6 +72,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback() {
+                    @Override
+                    public void onActivityResult(Object result) {
+                        ActivityResult res = (ActivityResult) result;
+
+                        if (res.getResultCode() == RESULT_OK && res.getData() != null) {
+                            // Fetch the score from the Intent
+                            int score = res.getData().getIntExtra(GameActivity.BUNDLE_EXTRA_SCORE, 0);
+                            Log.e("msg", "Score : " + score);
+                        }
+                    }
+                });
+
         //onClick button listener
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //Start GameActivity
                 Intent gameActivityIntent = new Intent(MainActivity.this, GameActivity.class);
-                startActivity(gameActivityIntent);
+                mGetContent.launch(gameActivityIntent);
             }
         });
 

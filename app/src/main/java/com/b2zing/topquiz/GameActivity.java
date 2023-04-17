@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,12 +20,13 @@ import java.util.Arrays;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int INITIAL_QUESTION_COUNT = 4;
+    public static final String BUNDLE_EXTRA_SCORE = "BUNDLE_EXTRA_SCORE";
 
     //Instanciate the bank of questions
     private QuestionBank mQuestionBank;
     //Instanciate remain questions counter
     private int mRemainingQuestionCount;
-    private int score;
+    private int mScore;
 
     //Intanciate the layout elements
     private TextView mTextViewQuestion;
@@ -70,10 +72,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("Well done!")
-                .setMessage("Your score is " + score)
+                .setMessage("Your score is " + mScore)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.putExtra(BUNDLE_EXTRA_SCORE, mScore);
+                        setResult(RESULT_OK, intent);
                         finish();
                     }
                 })
@@ -157,7 +162,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(index == mQuestionBank.getCurrentQuestion().getAnswerIndex()) {
-            this.score++;
+            this.mScore++;
             Log.e("msg", "Answer correct!");
 
             //Show toast
@@ -176,7 +181,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             displayQuestion(mCurrentQuestion);
         } else {
             // No questions left, end the game
-            Log.v("msg", "End of the game " + this.score);
+            Log.v("msg", "End of the game " + this.mScore);
             this.endGame();
         }
 
