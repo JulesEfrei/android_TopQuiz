@@ -2,6 +2,8 @@ package com.b2zing.topquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +24,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private QuestionBank mQuestionBank;
     //Instanciate remain questions counter
     private int mRemainingQuestionCount;
+    private int score;
 
     //Intanciate the layout elements
     private TextView mTextViewQuestion;
@@ -61,6 +64,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mAnswerButton2.setText(question.getAnswerList().get(1));
         mAnswerButton3.setText(question.getAnswerList().get(2));
         mAnswerButton4.setText(question.getAnswerList().get(3));
+    }
+
+    private void endGame() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Well done!")
+                .setMessage("Your score is " + score)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .create()
+                .show();
     }
 
     private QuestionBank generateQuestionBank() {
@@ -139,15 +157,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(index == mQuestionBank.getCurrentQuestion().getAnswerIndex()) {
+            this.score++;
             Log.e("msg", "Answer correct!");
 
             //Show toast
-            Toast.makeText(this, "Correct!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
         } else {
             Log.e("msg", "Answer Incorrect!");
 
             //Show toast
-            Toast.makeText(this, "Incorrect!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
         }
 
         mRemainingQuestionCount--;
@@ -156,8 +175,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Question mCurrentQuestion = mQuestionBank.getNextQuestion();
             displayQuestion(mCurrentQuestion);
         } else {
-            // No question left, end the game
-            Log.v("msg", "End of the game");
+            // No questions left, end the game
+            Log.v("msg", "End of the game " + this.score);
+            this.endGame();
         }
 
     }
